@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japanese Vocabulary Learner</title>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  let vocabularies = [
+  { word: "さくら", pronunciation: "桜" }, 
+  { word: "ねこ", pronunciation: "猫" }
+];
+  let currentIndex = -1;
+  let showPronunciation = false;
+  
+  // Function to populate the textarea with the initial vocabularies
+  function populateTextarea() {
+    const textarea = document.getElementById("inputText");
+    const vocabText = vocabularies.map(vocab => `${vocab.word} ${vocab.pronunciation}`).join('\n');
+    textarea.value = vocabText;
+  }
+
+  // Function to parse and update vocabularies
+  function parseAndUpdateVocabularies() {
+    const inputContent = document.getElementById("inputText").value.trim();
+    const lines = inputContent.split('\n');
+    vocabularies = lines.map(line => {
+      const [word, pronunciation] = line.split(/[\s,;　]+/); // Adjust based on your delimiter
+      return { word, pronunciation };
+    });
+  }
+
+  // Function to draw a card
+  function drawCard() {
+    if (currentIndex === -1 || !showPronunciation) {
+      parseAndUpdateVocabularies(); // Update vocabularies each time before drawing a new word
+      if (vocabularies.length === 0) {
+        document.getElementById("displayArea").textContent = "Please add vocabularies to start.";
+        return;
+      }
+
+      currentIndex = Math.floor(Math.random() * vocabularies.length);
+      document.getElementById("displayArea").textContent = vocabularies[currentIndex].word;
+      showPronunciation = true;
+    } else if (showPronunciation) {
+      document.getElementById("displayArea").textContent = vocabularies[currentIndex].pronunciation;
+      showPronunciation = false;
+      currentIndex = -1; // Reset to allow a new word to be selected next time
+    }
+  }
+
+  // Toggle input visibility
+  function toggleInputVisibility() {
+    const inputSection = document.getElementById("inputSection");
+    if (inputSection.style.display === "none") {
+      inputSection.style.display = "block";
+    } else {
+      inputSection.style.display = "none";
+    }
+  }
+
+  // Event listeners
+  document.getElementById("displayArea").addEventListener("click", drawCard);
+  document.getElementById("toggleInputBtn").addEventListener("click", toggleInputVisibility);
+  populateTextarea();
+  
+  
+});
+</script>
+<style>
+  #inputSection {
+    margin-bottom: 20px;
+  }
+  #displayArea {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    cursor: pointer;
+    border: 2px dashed #ccc;
+    margin-top: 20px;
+    background-color: #f0f0f0;
+  }
+  #inputText {
+    width: 100%;
+    height: 100px;
+  }
+</style>
+</head>
+<body>
+<button id="toggleInputBtn">Toggle</button>
+<div id="inputSection" style="display:none">
+  <textarea id="inputText" placeholder="Enter vocabularies here, one per line, formatted as 'word pronunciation' (e.g., こうえん 公園)"></textarea>
+</div>
+<div id="displayArea">Click here to start</div>
+</body>
+</html>
